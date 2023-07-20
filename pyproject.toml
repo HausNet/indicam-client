@@ -4,11 +4,22 @@ build-backend = "flit_core.buildapi"
 
 [project]
 name = "indicam_client"
-authors = [{name = "HausNet", email = "support@hausnet.io"}]
-readme = "README.md"
+authors = [
+    {name = "HausNet Admin", email = "admin@hausnet.io"}
+]
+readme = "README.rst"
 license = {file = "LICENSE"}
-classifiers = ["License :: OSI Approved :: MIT License"]
-dynamic = ["version", "description"]
+classifiers = [
+    "License :: OSI Approved :: MIT License"
+]
+requires-python = "<4"
+dynamic = [
+    "version", "description"
+]
+dependencies = [
+    "requests==2.31.0",
+]
 
 [project.urls]
 Home = "https://hausnet.io"
+Documentation = "https://docs.hausnet.io/indicam"

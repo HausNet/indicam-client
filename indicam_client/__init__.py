@@ -1,5 +1,3 @@
-"""Top-level package for IndiCam Client."""
+"""A thin client for the IndiCam Service."""
 
-__author__ = """Louis Calitz"""
-__email__ = 'louis@hausnet.io'
 __version__ = '0.1.0'

@@ -108,7 +108,6 @@ class IndiCamServiceClient:
             return False
         return True
 
-
     def upload_image(self, device_name, image) -> int | None:
         """ Post the image to the service, for processing, and return the
             image ID returned by the API, None if an error occurred.
@@ -125,7 +124,6 @@ class IndiCamServiceClient:
                 _LOGGER.error(response["error"])
             return None
         return response.json()['image_id']
-
 
     def get_measurement(self, image_id: int) -> GaugeMeasurement | None:
         """ Get the measurement for the submitted image. """
