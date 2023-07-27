@@ -12,3 +12,8 @@ History
 
 * Added function to retrieve defined indicams for user, in order to be able to test authentication without
   requiring a device definition to be entered at the authentication step.
+
+0.3.0 (2023-07-26)
+------------------
+
+* Replaced the indicam listing function with an explicit connection test function.

@@ -7,8 +7,6 @@ from __future__ import annotations
 import io
 from dataclasses import dataclass
 import logging
-from typing import Any, Optional
-
 import requests as req
 
 # Camera config items
@@ -16,6 +14,10 @@ CAMCONFIG_MAX_KEY = 'full_perc_from_top'
 CAMCONFIG_MIN_KEY = 'empty_perc_from_bottom'
 # Timeout for service requests
 HTTP_TIMEOUT = 30
+# Connection test results
+CONNECT_OK = 0
+CONNECT_AUTH_FAIL = 1
+CONNECT_FAIL = 2
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -49,6 +51,21 @@ class IndiCamServiceClient:
             'Authorization': f'Token {api_key}',
         }
 
+    def test_connect(self) -> int:
+        """Requests an indicam list from the server, and depending on the success of that, returns one of:
+            * CONNECT_OK - Connected and authenticated
+            * CONNECT_FAIL - A connection could not be made to the server
+            * CONNECT_AUTH_FAIL - Authentication failed
+        """
+        try:
+            response = req.get(f'{self._url}/indicams/', timeout=HTTP_TIMEOUT, headers=self._req_header)
+            if response.status_code == 200:
+                return CONNECT_OK
+            else:
+                return CONNECT_AUTH_FAIL
+        except req.exceptions.RequestException:
+            return CONNECT_FAIL
+
     def get_indicam_id(self, name: str) -> int | None:
         """ Get a camera's service ID, using the given name """
         response = req.get(
@@ -64,23 +81,6 @@ class IndiCamServiceClient:
             )
             return None
         return response.json()[0]['id']
-
-    def list_indicams(self) -> Optional[dict[str, Any]]:
-        """Return a list of all the indicams belonging to the user. Might be empty. Returns "None" if an error
-        occurred.
-        """
-        response = req.get(
-            f'{self._url}/indicams/',
-            timeout=HTTP_TIMEOUT,
-            headers=self._req_header
-        )
-        if response.status_code != 200:
-            _LOGGER.error(
-                "Failed to return a list of indicams, even if empty - status=%d",
-                response.status_code
-            )
-            return None
-        return response.json()
 
     def get_camconfig(self, indicam_id: int) -> CamConfig | None:
         """ Get the service's version of the camera configuration. """
