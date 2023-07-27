@@ -7,19 +7,12 @@ IndiCam Client
         :target: https://pypi.python.org/pypi/indicam_client
 
 
-A thin Python client for the IndiCam service. The IndiCam service extracts measurements from images of analog meters,
-for use in home or other automation.
+A thin Python client wrapping the IndiCam service API. The IndiCam service extracts measurements from images of
+analog meters, notably oil tank gauges, for use in home or other automation.
 
 * Free software: MIT license
 
+Documentation
+=============
+The documentation can be viewed (here)[https://docs.hausnet.io/indicam_client]
 
-Getting started
----------------
-
-Credits
--------
-
-This package was created with Cookiecutter_ and the `audreyr/cookiecutter-pypackage`_ project template.
-
-.. _Cookiecutter: https://github.com/audreyr/cookiecutter
-.. _`audreyr/cookiecutter-pypackage`: https://github.com/audreyr/cookiecutter-pypackage

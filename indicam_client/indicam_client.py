@@ -7,6 +7,7 @@ from __future__ import annotations
 import io
 from dataclasses import dataclass
 import logging
+from typing import Any, Optional
 
 import requests as req
 
@@ -63,6 +64,23 @@ class IndiCamServiceClient:
             )
             return None
         return response.json()[0]['id']
+
+    def list_indicams(self) -> Optional[dict[str, Any]]:
+        """Return a list of all the indicams belonging to the user. Might be empty. Returns "None" if an error
+        occurred.
+        """
+        response = req.get(
+            f'{self._url}/indicams/',
+            timeout=HTTP_TIMEOUT,
+            headers=self._req_header
+        )
+        if response.status_code != 200:
+            _LOGGER.error(
+                "Failed to return a list of indicams, even if empty - status=%d",
+                response.status_code
+            )
+            return None
+        return response.json()
 
     def get_camconfig(self, indicam_id: int) -> CamConfig | None:
         """ Get the service's version of the camera configuration. """
