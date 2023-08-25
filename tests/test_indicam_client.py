@@ -4,7 +4,7 @@ import unittest
 import responses
 
 from indicam_client import indicam_client as client
-from indicam_client.indicam_client import GaugeMeasurement
+from indicam_client import GaugeMeasurement
 
 # Recurring valid values
 INDICAM_ID = 1
@@ -148,6 +148,7 @@ class TestIndicamClient(unittest.TestCase):
     def test_get_measurement(self) -> None:
         """ Test getting a measurement. """
         test_measurement = {
+            'error': 0,
             'gauge_left_col': 10,
             'gauge_right_col': 100,
             'gauge_top_row': 5,
@@ -162,7 +163,7 @@ class TestIndicamClient(unittest.TestCase):
             json=[test_measurement, ]
         )
         measurement = self.service_client.get_measurement(5678)
-        expected_measurement = measurement = GaugeMeasurement(
+        expected_measurement = GaugeMeasurement(
             body_left=int(test_measurement['gauge_left_col']),
             body_right=int(test_measurement['gauge_right_col']),
             body_top=int(test_measurement['gauge_top_row']),
@@ -171,3 +172,24 @@ class TestIndicamClient(unittest.TestCase):
             value=float(test_measurement['value'])
         )
         self.assertEqual(expected_measurement, measurement)
+
+    @responses.activate
+    def test_get_measurement_failed(self) -> None:
+        """ Test a failed measurement retrieval. """
+        test_measurement = {
+            'error': 1,
+            'gauge_left_col': 10,
+            'gauge_right_col': 100,
+            'gauge_top_row': 5,
+            'gauge_bottom_row': 500,
+            'float_top_col': 200,
+            'value': 30.0
+        }
+        responses.get(
+            f"{ROOT_URL}/measurements/?src_image={5678}",
+            headers=HEADERS,
+            status=200,
+            json=[test_measurement, ]
+        )
+        measurement = self.service_client.get_measurement(5678)
+        self.assertIsNone(measurement)
