@@ -143,6 +143,17 @@ class IndiCamServiceClient:
             return None
         return response.json()['image_id']
 
+    def measurement_ready(self, image_id: int) -> bool:
+        """ Has a measurement been made for the given image? """
+        response = req.get(
+            f"{self._url}/measurements/?src_image={image_id}",
+            headers=self._req_header,
+            timeout=HTTP_TIMEOUT
+        )
+        if not response or response.status_code != 200 or not response.content:
+            return False
+        return True
+
     def get_measurement(self, image_id: int) -> GaugeMeasurement | None:
         """ Get the measurement for the submitted image. """
         response = req.get(

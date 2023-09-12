@@ -201,3 +201,53 @@ class TestIndicamClient(unittest.TestCase):
         )
         measurement = self.service_client.get_measurement(5678)
         self.assertIsNone(measurement)
+
+    @responses.activate
+    def test_measurement_not_available(self) -> None:
+        """ Test that a measurement not yet available is detected. """
+        test_measurement = {
+            'id': 1234,
+            'prediction_model': 5,
+            'error': 2,
+            'value': 0.0,
+            'gauge_left_col': None,
+            'gauge_right_col': None,
+            'gauge_top_row': None,
+            'gauge_bottom_row': None,
+            'float_top_col': None,
+            'decorated_image': None,
+            'src_image': 5678,
+        }
+        responses.get(
+            f"{ROOT_URL}/measurements/?src_image={5678}",
+            headers=HEADERS,
+            status=200,
+            body=""
+        )
+        ready = self.service_client.measurement_ready(5678)
+        self.assertFalse(ready)
+
+    @responses.activate
+    def test_measurement_available(self) -> None:
+        """ Test that a measurement that is available is detected. """
+        test_measurement = {
+            'id': 1234,
+            'prediction_model': 5,
+            'error': 2,
+            'value': 0.0,
+            'gauge_left_col': None,
+            'gauge_right_col': None,
+            'gauge_top_row': None,
+            'gauge_bottom_row': None,
+            'float_top_col': None,
+            'decorated_image': None,
+            'src_image': 5678,
+        }
+        responses.get(
+            f"{ROOT_URL}/measurements/?src_image={5678}",
+            headers=HEADERS,
+            status=200,
+            json=[test_measurement,]
+        )
+        ready = self.service_client.measurement_ready(5678)
+        self.assertTrue(ready)
