@@ -16,3 +16,5 @@ Documentation
 =============
 The documentation can be viewed (here)[https://docs.hausnet.io/indicam_client]
 
+Developer notes
+===============

@@ -158,13 +158,11 @@ class IndiCamServiceClient:
             )
             return None
         result_json = response.json()[0]
-        if result_json['error'] != 0:
-            _LOGGER.error(
-                "Error extracting measurement for image %d', status=%d, error=%d",
-                image_id,
-                None if not response else response.status_code,
-                result_json['error']
-            )
+        if result_json['error'] == 1:
+            _LOGGER.error("Unknown error processing image %d, measurement %d", image_id, result_json['id'])
+            return None
+        if result_json['error'] == 2:
+            _LOGGER.error("Could not extract measurement from image %d, measurement %d", image_id, result_json['id'])
             return None
         measurement = GaugeMeasurement(
             body_left=int(result_json['gauge_left_col']),

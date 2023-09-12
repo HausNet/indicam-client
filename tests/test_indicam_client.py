@@ -148,13 +148,17 @@ class TestIndicamClient(unittest.TestCase):
     def test_get_measurement(self) -> None:
         """ Test getting a measurement. """
         test_measurement = {
+            'id': 1234,
+            'prediction_model': 5,
             'error': 0,
+            'value': 30.0,
             'gauge_left_col': 10,
             'gauge_right_col': 100,
             'gauge_top_row': 5,
             'gauge_bottom_row': 500,
             'float_top_col': 200,
-            'value': 30.0
+            'decorated_image': 'http://dummyhost.com/media/images/uid_1/testdev/20230821163518545474-decorated-v5.jpg',
+            'src_image': 5678,
         }
         responses.get(
             f"{ROOT_URL}/measurements/?src_image={5678}",
@@ -177,13 +181,17 @@ class TestIndicamClient(unittest.TestCase):
     def test_get_measurement_failed(self) -> None:
         """ Test a failed measurement retrieval. """
         test_measurement = {
-            'error': 1,
-            'gauge_left_col': 10,
-            'gauge_right_col': 100,
-            'gauge_top_row': 5,
-            'gauge_bottom_row': 500,
-            'float_top_col': 200,
-            'value': 30.0
+            'id': 1234,
+            'prediction_model': 5,
+            'error': 2,
+            'value': 0.0,
+            'gauge_left_col': None,
+            'gauge_right_col': None,
+            'gauge_top_row': None,
+            'gauge_bottom_row': None,
+            'float_top_col': None,
+            'decorated_image': None,
+            'src_image': 5678,
         }
         responses.get(
             f"{ROOT_URL}/measurements/?src_image={5678}",
