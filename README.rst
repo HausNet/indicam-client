@@ -14,7 +14,14 @@ analog meters, notably oil tank gauges, for use in home or other automation.
 
 Documentation
 =============
-The documentation can be viewed (here)[https://docs.hausnet.io/indicam_client]
+The documentation can be viewed (here)[https://docs.hausnet.io/indicam/#client]
 
 Developer notes
 ===============
+
+In order to publish a package, update the version number in `indicam_client/__init__.py`. Then:
+
+```
+flit build
+flit publish
+```
