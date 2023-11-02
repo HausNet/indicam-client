@@ -27,3 +27,7 @@ History
 0.3.3 (2023-08-25)
 ------------------
 * Missed old-style module ref in tests
+
+1.0 (2023-11-01)
+----------------
+* Async access to service via aiohttp

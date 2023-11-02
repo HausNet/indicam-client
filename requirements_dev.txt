@@ -8,5 +8,5 @@ coverage
 Sphinx
 twine
 flit
-responses
 setuptools
+aioresponses
