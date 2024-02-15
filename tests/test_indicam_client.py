@@ -1,8 +1,7 @@
 """Tests for `indicam_client` package."""
 import asyncio
-import io
 
-from aiohttp import web
+import aiohttp
 from aioresponses import aioresponses
 
 from indicam_client import indicam_client
@@ -14,13 +13,17 @@ INDICAM_ID = 1
 INDICAM_HANDLE = "test_handle"
 API_KEY = "Test API Key"
 ROOT_URL = "https://app.hausnet.io/indicam/api"
-HEADERS = {'Authorization': f'Token {API_KEY}'}
+HEADERS = {
+    'Accept': 'application/json',
+    'Authorization': f'Token {API_KEY}',
+}
 
 
 def test_indicam_id_found():
     """Test that a valid indicam handle produces the indicam key."""
     loop = asyncio.get_event_loop()
-    service_client = indicam_client.IndiCamServiceClient(ROOT_URL, api_key=API_KEY)
+    session = aiohttp.ClientSession()
+    service_client = indicam_client.IndiCamServiceClient(session, ROOT_URL, api_key=API_KEY)
     with aioresponses() as mock_server:
         mock_server.get(
             f'{ROOT_URL}/indicams/?handle={INDICAM_HANDLE}',
@@ -29,13 +32,16 @@ def test_indicam_id_found():
         )
         indicam_id = loop.run_until_complete(service_client.get_indicam_id(INDICAM_HANDLE))
         assert indicam_id == INDICAM_ID
-        mock_server.assert_called_once_with(f'{ROOT_URL}/indicams/?handle={INDICAM_HANDLE}')
+        mock_server.assert_called_once_with(
+            f'{ROOT_URL}/indicams/?handle={INDICAM_HANDLE}', headers=HEADERS)
+    session.close()
 
 
 def test_indicam_id_not_found():
     """Test that an invalid handle is handled correctly."""
     loop = asyncio.get_event_loop()
-    service_client = indicam_client.IndiCamServiceClient(ROOT_URL, api_key=API_KEY)
+    session = aiohttp.ClientSession()
+    service_client = indicam_client.IndiCamServiceClient(session, ROOT_URL, api_key=API_KEY)
     with aioresponses() as mock_server:
         mock_server.get(
             f"{ROOT_URL}/indicams/?handle={INDICAM_HANDLE + 'x'}",
@@ -44,13 +50,17 @@ def test_indicam_id_not_found():
         )
         camconfig = loop.run_until_complete(service_client.get_indicam_id(INDICAM_HANDLE + 'x'))
         assert camconfig is None
-        mock_server.assert_called_once_with(f"{ROOT_URL}/indicams/?handle={INDICAM_HANDLE + 'x'}")
+        mock_server.assert_called_once_with(
+            f"{ROOT_URL}/indicams/?handle={INDICAM_HANDLE + 'x'}", headers=HEADERS
+        )
+    session.close()
 
 
 def test_camconfig_retrieved():
     """Test getting the camera configuration."""
     loop = asyncio.get_event_loop()
-    service_client = indicam_client.IndiCamServiceClient(ROOT_URL, api_key=API_KEY)
+    session = aiohttp.ClientSession()
+    service_client = indicam_client.IndiCamServiceClient(session, ROOT_URL, api_key=API_KEY)
     with aioresponses() as mock_server:
         mock_server.get(
             f"{ROOT_URL}/indicams/{INDICAM_ID}/camconfig_current/",
@@ -62,13 +72,17 @@ def test_camconfig_retrieved():
         assert camconfig is not None
         assert 10 == camconfig.min_perc
         assert 11 == camconfig.max_perc
-        mock_server.assert_called_once_with(f"{ROOT_URL}/indicams/{INDICAM_ID}/camconfig_current/")
+        mock_server.assert_called_once_with(
+            f"{ROOT_URL}/indicams/{INDICAM_ID}/camconfig_current/", headers=HEADERS
+        )
+    session.close()
 
 
 def test_camconfig_retrieve_failed():
     """Test that when getting the camera configuration fails, None is returned."""
     loop = asyncio.get_event_loop()
-    service_client = indicam_client.IndiCamServiceClient(ROOT_URL, api_key=API_KEY)
+    session = aiohttp.ClientSession()
+    service_client = indicam_client.IndiCamServiceClient(session, ROOT_URL, api_key=API_KEY)
     with aioresponses() as mock_server:
         mock_server.get(
             f"{ROOT_URL}/indicams/{INDICAM_ID}/camconfig_current/",
@@ -77,13 +91,16 @@ def test_camconfig_retrieve_failed():
         )
         camconfig = loop.run_until_complete(service_client.get_camconfig(INDICAM_ID))
         assert camconfig is None
-        mock_server.assert_called_once_with(f"{ROOT_URL}/indicams/{INDICAM_ID}/camconfig_current/")
+        mock_server.assert_called_once_with(
+            f"{ROOT_URL}/indicams/{INDICAM_ID}/camconfig_current/", headers=HEADERS)
+    session.close()
 
 
 def test_camconfig_created():
     """ Test that a camconfig can be created. """
     loop = asyncio.get_event_loop()
-    service_client = indicam_client.IndiCamServiceClient(ROOT_URL, api_key=API_KEY)
+    session = aiohttp.ClientSession()
+    service_client = indicam_client.IndiCamServiceClient(session, ROOT_URL, api_key=API_KEY)
     with aioresponses() as mock_server:
         mock_server.post(
             f"{ROOT_URL}/camconfigs/",
@@ -95,14 +112,17 @@ def test_camconfig_created():
         mock_server.assert_called_once_with(
             f"{ROOT_URL}/camconfigs/",
             method='POST',
+            headers=HEADERS,
             data=({'indicam': INDICAM_ID, 'full_perc_from_top': 13, 'empty_perc_from_bottom': 11},)
         )
+    session.close()
 
 
 def test_camconfig_not_created():
     """ Test that an error creating a new camconfig is handled. """
     loop = asyncio.get_event_loop()
-    service_client = indicam_client.IndiCamServiceClient(ROOT_URL, api_key=API_KEY)
+    session = aiohttp.ClientSession()
+    service_client = indicam_client.IndiCamServiceClient(session, ROOT_URL, api_key=API_KEY)
     with aioresponses() as mock_server:
         mock_server.post(
             f"{ROOT_URL}/camconfigs/",
@@ -114,30 +134,35 @@ def test_camconfig_not_created():
         mock_server.assert_called_once_with(
             f"{ROOT_URL}/camconfigs/",
             method='POST',
+            headers=HEADERS,
             data=({'indicam': INDICAM_ID, 'full_perc_from_top': 13, 'empty_perc_from_bottom': 11},)
         )
+    session.close()
 
 
 def test_image_uploaded() -> None:
     """ Test the image upload function. """
     loop = asyncio.get_event_loop()
-    service_client = indicam_client.IndiCamServiceClient(ROOT_URL, api_key=API_KEY)
+    session = aiohttp.ClientSession()
+    service_client = indicam_client.IndiCamServiceClient(session, ROOT_URL, api_key=API_KEY)
     with aioresponses() as mock_server:
         mock_server.post(
             f"{ROOT_URL}/images/{INDICAM_ID}/upload/",
-            status=200,
+            status=201,
             payload={"image_id": 5678},
         )
         dummy_img = b"Hello"
         image_id = loop.run_until_complete(service_client.upload_image(INDICAM_ID, dummy_img))
         assert 5678 == image_id
         mock_server.assert_called_once()
+    session.close()
 
 
 def test_image_upload_fails() -> None:
     """ Test the image upload function when it fails. """
     loop = asyncio.get_event_loop()
-    service_client = indicam_client.IndiCamServiceClient(ROOT_URL, api_key=API_KEY)
+    session = aiohttp.ClientSession()
+    service_client = indicam_client.IndiCamServiceClient(session, ROOT_URL, api_key=API_KEY)
     with aioresponses() as mock_server:
         mock_server.post(
             f"{ROOT_URL}/images/{INDICAM_ID}/upload/",
@@ -147,6 +172,7 @@ def test_image_upload_fails() -> None:
         image_id = loop.run_until_complete(service_client.upload_image(INDICAM_ID, b"Hello"))
         assert not image_id
         mock_server.assert_called_once()
+    session.close()
 
 
 def test_get_measurement() -> None:
@@ -161,11 +187,13 @@ def test_get_measurement() -> None:
         'gauge_top_row': 5,
         'gauge_bottom_row': 500,
         'float_top_col': 200,
-        'decorated_image': 'http://dummyhost.com/media/images/uid_1/testdev/20230821163518545474-decorated-v5.jpg',
+        'decorated_image':
+            'https://dummyhost.com/media/images/uid_1/testdev/20230821163518545474-decorated-v5.jpg',
         'src_image': 5678,
     }
     loop = asyncio.get_event_loop()
-    service_client = indicam_client.IndiCamServiceClient(ROOT_URL, api_key=API_KEY)
+    session = aiohttp.ClientSession()
+    service_client = indicam_client.IndiCamServiceClient(session, ROOT_URL, api_key=API_KEY)
     with aioresponses() as mock_server:
         mock_server.get(
             f"{ROOT_URL}/measurements/?src_image={5678}",
@@ -182,7 +210,8 @@ def test_get_measurement() -> None:
             value=float(test_measurement['value'])
         )
         assert expected_measurement == measurement
-        mock_server.assert_called_once_with(f"{ROOT_URL}/measurements/?src_image={5678}")
+        mock_server.assert_called_once_with(f"{ROOT_URL}/measurements/?src_image={5678}", headers=HEADERS)
+    session.close()
 
 
 def test_get_measurement_failed() -> None:
@@ -201,7 +230,8 @@ def test_get_measurement_failed() -> None:
         'src_image': 5678,
     }
     loop = asyncio.get_event_loop()
-    service_client = indicam_client.IndiCamServiceClient(ROOT_URL, api_key=API_KEY)
+    session = aiohttp.ClientSession()
+    service_client = indicam_client.IndiCamServiceClient(session, ROOT_URL, api_key=API_KEY)
     with aioresponses() as mock_server:
         mock_server.get(
             f"{ROOT_URL}/measurements/?src_image={5678}",
@@ -210,13 +240,15 @@ def test_get_measurement_failed() -> None:
         )
         measurement = loop.run_until_complete(service_client.get_measurement(5678))
         assert measurement is None
-        mock_server.assert_called_once_with(f"{ROOT_URL}/measurements/?src_image={5678}")
+        mock_server.assert_called_once_with(f"{ROOT_URL}/measurements/?src_image={5678}", headers=HEADERS)
+    session.close()
 
 
 def test_measurement_not_available() -> None:
     """ Test that a measurement not yet available is detected. """
     loop = asyncio.get_event_loop()
-    service_client = indicam_client.IndiCamServiceClient(ROOT_URL, api_key=API_KEY)
+    session = aiohttp.ClientSession()
+    service_client = indicam_client.IndiCamServiceClient(session, ROOT_URL, api_key=API_KEY)
     with aioresponses() as mock_server:
         mock_server.get(
             f"{ROOT_URL}/measurements/?src_image={5678}",
@@ -225,7 +257,8 @@ def test_measurement_not_available() -> None:
         )
         ready = loop.run_until_complete(service_client.measurement_ready(5678))
         assert ready is False
-        mock_server.assert_called_once_with(f"{ROOT_URL}/measurements/?src_image={5678}")
+        mock_server.assert_called_once_with(f"{ROOT_URL}/measurements/?src_image={5678}", headers=HEADERS)
+    session.close()
 
 
 def test_measurement_available() -> None:
@@ -244,13 +277,15 @@ def test_measurement_available() -> None:
         'src_image': 5678,
     }
     loop = asyncio.get_event_loop()
-    service_client = indicam_client.IndiCamServiceClient(ROOT_URL, api_key=API_KEY)
+    session = aiohttp.ClientSession()
+    service_client = indicam_client.IndiCamServiceClient(session, ROOT_URL, api_key=API_KEY)
     with aioresponses() as mock_server:
         mock_server.get(
             f"{ROOT_URL}/measurements/?src_image={5678}",
             status=200,
-            payload=[test_measurement,]
+            payload=[test_measurement, ]
         )
         ready = loop.run_until_complete(service_client.measurement_ready(5678))
         assert ready
-        mock_server.assert_called_once_with(f"{ROOT_URL}/measurements/?src_image={5678}")
+        mock_server.assert_called_once_with(f"{ROOT_URL}/measurements/?src_image={5678}", headers=HEADERS)
+    session.close()

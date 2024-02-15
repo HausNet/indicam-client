@@ -2,6 +2,10 @@
 History
 =======
 
+0.1.1 (2024-02-15)
+------------------
+* Fixed up tests
+
 0.1.0 (2023-07-13)
 ------------------
 * First release on PyPI.
@@ -31,3 +35,11 @@ History
 1.0 (2023-11-01)
 ----------------
 * Async access to service via aiohttp
+
+1.0.1 (2023-11-02)
+------------------
+* Fixed premature closing of aiohttp.SessionClient
+
+1.0.2 (2023-11-03)
+------------------
+* Fixed error in image upload headers
