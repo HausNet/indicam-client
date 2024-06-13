@@ -2,6 +2,10 @@
 History
 =======
 
+0.1.0.4 (2024-02-15)
+------------------
+* Extended Python support to 3.12 to help resolve dependency conflict in Home Assistant 2024.6.2
+
 0.1.0.3 (2024-02-15)
 ------------------
 * Fixed up tests

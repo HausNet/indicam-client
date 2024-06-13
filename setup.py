@@ -15,8 +15,8 @@ requirements = [ ]
 test_requirements = [ ]
 
 setup(
-    author="Louis Calitz",
-    author_email='louis@hausnet.io',
+    author="HausNet Development Team",
+    author_email='dev@hausnet.io',
     python_requires='>=3.6',
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
@@ -27,6 +27,10 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
     ],
     description="A Python client for the IndiCam API. The IndiCam service extracts measurements from images of analog meters.",
     install_requires=requirements,
@@ -39,6 +43,6 @@ setup(
     test_suite='tests',
     tests_require=test_requirements,
     url='https://github.com/liber-tas/indicam_client',
-    version='0.1.0',
+    version='1.0.4',
     zip_safe=False,
 )
