@@ -2,15 +2,20 @@
 History
 =======
 
-0.1.0.4 (2024-02-15)
+1.0.5 (2024-06-14)
+------------------
+* Removed dependency on requests that was tripping up HASS component upgrades.
+* Added aiohttp as dependency
+
+1.0.4 (2024-02-15)
 ------------------
 * Extended Python support to 3.12 to help resolve dependency conflict in Home Assistant 2024.6.2
 
-0.1.0.3 (2024-02-15)
+1.0.3 (2024-02-15)
 ------------------
 * Fixed up tests
 
-0.1.0.2 (2023-07-13)
+1.0.2 (2023-07-13)
 --------------------
 * First release on PyPI.
 

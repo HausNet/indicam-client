@@ -1,12 +1,13 @@
 -r requirements.txt
-bump2version
-wheel
-watchdog
-flake8
-tox
-coverage
-Sphinx
-twine
-flit
-setuptools
 aioresponses
+bump2version
+coverage
+flake8
+flit
+pytest
+setuptools
+Sphinx
+tox
+twine
+watchdog
+wheel
