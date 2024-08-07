@@ -108,7 +108,7 @@ class IndiCamServiceClient:
             'indicam': indicam_id,
             CAMCONFIG_MAX_KEY: camconfig.max_perc,
             CAMCONFIG_MIN_KEY: camconfig.min_perc
-        },
+        }
         async with self._session.post(
             f'{self._base_url}/camconfigs/', data=data, headers=self.req_headers
         ) as response:

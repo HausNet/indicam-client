@@ -2,6 +2,11 @@
 History
 =======
 
+1.0.6 (2024-08-07)
+------------------
+Fixed problem with cam_config create post - was passing a list with one dict as only element, should have
+been passing dict directly. Exposed by DRF refusing to read it (anymore?).
+
 1.0.5 (2024-06-14)
 ------------------
 * Removed dependency on requests that was tripping up HASS component upgrades.

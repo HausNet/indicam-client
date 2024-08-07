@@ -113,7 +113,7 @@ def test_camconfig_created():
             f"{ROOT_URL}/camconfigs/",
             method='POST',
             headers=HEADERS,
-            data=({'indicam': INDICAM_ID, 'full_perc_from_top': 13, 'empty_perc_from_bottom': 11},)
+            data={'indicam': INDICAM_ID, 'full_perc_from_top': 13, 'empty_perc_from_bottom': 11}
         )
     session.close()
 
@@ -135,7 +135,7 @@ def test_camconfig_not_created():
             f"{ROOT_URL}/camconfigs/",
             method='POST',
             headers=HEADERS,
-            data=({'indicam': INDICAM_ID, 'full_perc_from_top': 13, 'empty_perc_from_bottom': 11},)
+            data={'indicam': INDICAM_ID, 'full_perc_from_top': 13, 'empty_perc_from_bottom': 11}
         )
     session.close()
 
