@@ -2,6 +2,10 @@
 History
 =======
 
+1.0.7 (2024-08-30)
+------------------
+Fixed internal server failure (HTTP status 500) being treated as an authorization failure.
+
 1.0.6 (2024-08-07)
 ------------------
 Fixed problem with cam_config create post - was passing a list with one dict as only element, should have

@@ -61,8 +61,10 @@ class IndiCamServiceClient:
             async with self._session.get(f'{self._base_url}/indicams/', headers=self.req_headers) as response:
                 if response.status == 200:
                     return CONNECT_OK
-                else:
+                elif response.status == 401 or response.status == 403:
                     return CONNECT_AUTH_FAIL
+                else:
+                    return CONNECT_FAIL
         except aiohttp.ClientError:
             return CONNECT_FAIL
 
