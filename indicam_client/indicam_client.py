@@ -71,7 +71,7 @@ class IndiCamServiceClient:
     async def get_indicam_id(self, name: str) -> int | None:
         """ Get a camera's service ID, using the given name """
         async with self._session.get(
-            f'{self._base_url}/indicams/?handle={name}', headers=self.req_headers
+            f'{self._base_url}/indicams/?name={name}', headers=self.req_headers
         ) as response:
             if response.status != 200:
                 _LOGGER.error(
@@ -81,7 +81,7 @@ class IndiCamServiceClient:
                 )
                 return None
             data = await response.json()
-            return data[0]['id']
+            return data['id']
 
     async def get_camconfig(self, indicam_id: int) -> CamConfig | None:
         """ Get the service's version of the camera configuration. """

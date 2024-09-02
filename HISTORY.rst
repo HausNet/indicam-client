@@ -2,6 +2,10 @@
 History
 =======
 
+1.0.8 (2024-09-92)
+------------------
+Changed parameter to get device ID by name from "handle" to "name".
+
 1.0.7 (2024-08-30)
 ------------------
 Fixed internal server failure (HTTP status 500) being treated as an authorization failure.
